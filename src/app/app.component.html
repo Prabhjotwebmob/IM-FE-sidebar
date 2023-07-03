@@ -1,0 +1,521 @@
+<!-- <div class="row" style="display: flex;">
+    <div class="col">
+        <div>
+            <div class="menu-icon"><a routerLink="/web/market">Money Market</a></div>
+            <div class="menu-icon"><a routerLink="/web/trading-partner">Trading Partner</a></div>
+            <div class="menu-icon"><a routerLink="/web/third-party">Holiday Calendar</a></div>
+            <div #chatComponent></div>
+        </div>
+    </div>
+</div> -->
+
+<div class="left-nav-side-menu blur-bg">
+    <div class="d-flex align-items-start">
+      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <button class="nav-link" type="button" role="tab" ngbTooltip="MoneyMatch" (click)="goToMoneyMarketTab(moneyMarketCurrencyTab)"
+        [ngClass]="{active: activeIfContains('/web/money-market')}" *ngIf="hasAccessToProduct('MONEY_MATCH')">MM</button>
+        <button class="nav-link" type="button" role="tab" ngbTooltip="RepoBlick" (click)="goToRepoMarket(repoMarketCurrencyTab)"
+        [ngClass]="{active: activeIfContains('/web/repo')}" *ngIf="hasAccessToProduct(product.REPO) && userAuthService.platform.host === platformConstant.INSTIMATCH && (userAuthService?.user?.repoClient || userAuthService.user.isAdmin === 'Y')">RB</button>
+        <button class="nav-link" type="button" role="tab" ngbTooltip="NoticeAccount" (click)="goToNoticeAccountTab(noticeAccountCurrencyTab)"
+        [ngClass]="{active: activeIfContains('/web/notice-account') && !activeIfContainsSetting('/web/notice-account/settings')}" *ngIf="hasAccessToProduct(product.NOTICE_ACCOUNT) && (userAuthService.user?.noticeAccountType || userAuthService.user.isAdmin === 'Y')">NA</button>
+        <button class="nav-link" type="button" role="tab" ngbTooltip="MoneyMarketFunds" (click)="navigateToMosaic(moneyMarketFundsTab)"
+        [ngClass]="{active: activeIfContains('/web/mosaic')}" *ngIf="hasAccessToProduct(product.MONEY_MARKET_FUNDS) && userAuthService.companyDetails?.showMMF && hasAccessControl(product.MONEY_MARKET_FUNDS, 'READ_MONEY_MARKET_FUNDS')">MF</button>
+        <button class="nav-link" type="button" role="tab" ngbTooltip="ThoughtExchange" (click)="navigateToRoute('/web/thought-exchange')"
+        [ngClass]="{active: activeIfContains('/web/thought-exchange')}" *ngIf="activeIfContains('/web/thought-exchange') && hasAccessToProduct(product.THOUGHT_EXCHANGE) && hasAccessControl(product.THOUGHT_EXCHANGE, 'READ_THOUGHT_EXCHANGE') && userAuthService.platform.host === platformConstant.MUNIX">TE</button>
+      </div>
+    </div>
+  </div>
+  <div class="nav-side-menu blur-bg">
+    <div class="product-name">
+      <img [src]="getHeaderLogo()" alt="...">
+      <h2>{{getHeaderMainText()}}</h2>
+    </div>
+    <div class="menu-list" [ngClass]="userAuthService.platform.host == platformConstant.MUNIX ? 'munix-menu-list' : 'im-menu-list'">
+      <li class="sidenav-btn">
+        <div class="btn-div">
+          <button type="button" (click)="openQuotes('Live')" class="btn btn-secondary"
+          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'"
+          >
+            My Quotes
+          </button>
+          <button type="button" (click)="uploadQuotes()" class="btn btn-secondary ml-0"
+          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'"
+          >
+            Upload Quotes
+          </button>
+        </div>
+        <div class="clearquote-div btn-div d-none">
+          <button type="button" class="btn-warning btn" (click)="openQuotes('Clear')"
+          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'"
+          >
+          Clear <br> Quotes
+            <div class="btn-icon">
+              <span class="badge badge-default" id="quoteCount" *ngIf="liveRequestsCount">{{liveRequestsCount}}</span>
+              <i class="fa fa-exclamation-triangle"></i>
+            </div>
+          </button>
+          <button type="button" (click)="openQuotes('Previous')" class="btn-primary btn ml-0"
+          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'"
+          >
+            Previous<br />Quotes
+            <div class="btn-icon">
+              <i class="fa fa-history"></i>
+            </div>
+          </button>
+        </div>
+      </li>
+      <ul id="menu-content" class="menu-content collapse out position-relative">
+        <ng-container *ngIf="activeIfContains('/web/money-market')">
+          <small>TRADE</small>
+          <ul class="sub-menu currencies-tab show" id="currencies">
+            <li class="money-market-tab" [ngClass]="{active: activeIfContains('/web/money-market/') && !activeIfContainsSetting('/web/money-market/settings') && !activeIfContainsSetting('/web/money-market/maturity-trades') && !activeIfContainsSetting('/web/money-market/trades')}" *ngIf="hasAccessToProduct(product.MONEY_MATCH)">
+              <a (click)="goToMoneyMarketTab(moneyMarketCurrencyTab)">
+                <div>
+                  <img src="assets/img/icon/order-book-dark.svg" alt="order-book">
+                  <span>Orderbook</span>
+                </div>
+              </a>
+            </li>
+            <li routerLink="/web/money-market/settings" *ngIf="hasAccessControl('MONEY_MATCH', 'READ_MARKET_SETTINGS')" [ngClass]="{active: activeIfContainsSetting('/web/money-market/settings')}">
+              <a>
+                <div>
+                  <img src="assets/img/icon/icon-setting.svg" alt="setting">
+                  <span>MoneyMatch Settings</span>
+                </div>
+              </a>
+            </li>
+            <li routerLink="/web/money-market/maturity-trades" *ngIf="hasAccessControl('MONEY_MATCH', 'READ_MATURITY_LIST')" [ngClass]="{ active: activeIfContainsSetting('/web/money-market/maturity-trades') }">
+              <a>
+                <div>
+                  <img src="assets/img/icon/maturity-list-dark.svg" alt="maturity-list">
+                  <span>Maturity List</span>
+                </div>
+                <div>
+                  <span class="badge trade-badge">{{tradeLogsCount?.mmMaturityLog || 0}}</span>
+                </div>
+              </a>
+            </li>
+            <li (click)="clickOnMaturingTransactionButton()" *ngIf="hasAccessControl('MONEY_MATCH', 'READ_MATURITY_LIST') && rollingTradeNotificationsData.length > 0">
+              <a>
+                <div>
+                  <i class="fa fa-random"></i> 
+                  <span>Maturing Transaction</span>
+                </div>
+              </a>
+            </li>
+            <li (click)="navigateToRoute('web/money-market/trades')" *ngIf="hasAccessControl('MONEY_MATCH', 'READ_TRADE_LOGS')" [ngClass]="{ active: activeIfContainsSetting('/web/money-market/trades') }">
+              <a>
+                <div>
+                  <img src="assets/img/icon/trade-log-dark.svg" alt="trade-log">
+                  <span>Trade Logs</span>
+                </div>
+                <div>
+                  <span class="badge pull-right trade-badge">{{tradeLogsCount?.noticeAccountLog ? ((tradeLogsCount?.noticeAccountLog + tradeLogsCount?.mmTradeLog) || 0) : (tradeLogsCount?.mmTradeLog || 0)}}</span>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </ng-container>
+        <ng-container *ngIf="activeIfContains('/web/notice-account')">
+          <small>TRADE</small>
+          <ul class="sub-menu currencies-tab show" id="noticeAccountTabs">
+            <li class="notice-account-tab product-tab" [ngClass]="{active: activeIfContains('/web/notice-account') && !activeIfContainsSetting('/web/notice-account/settings') && !activeIfContainsSetting('/web/notice-account/investment') && !activeIfContainsSetting('/web/notice-account/borrower') && !activeIfContainsSetting('/web/notice-account/trade-logs')}" *ngIf="hasAccessToProduct(product.NOTICE_ACCOUNT) && (userAuthService.user?.noticeAccountType || userAuthService.user.isAdmin === 'Y')">
+              <a (click)="goToNoticeAccountTab(noticeAccountCurrencyTab)">
+                <div>
+                  <img src="assets/img/icon/order-book-dark.svg" alt="order-book">
+                 <span>Orderbook</span>
+                </div>
+              </a>
+            </li>
+            <li routerLink="/web/notice-account/settings" *ngIf="hasAccessControl(product.NOTICE_ACCOUNT, 'READ_MARKET_SETTINGS')" [ngClass]="{active: activeIfContainsSetting('/web/notice-account/settings')}">
+              <a>
+               <div>
+                <img src="assets/img/icon/icon-setting.svg" alt="setting">
+                <span>Notice Account Settings</span>
+               </div>
+              </a>
+            </li>
+            <li routerLink="/web/notice-account/investment" *ngIf="hasAccessControl(product.NOTICE_ACCOUNT, 'READ_INVESTMENT_LIST') && (userAuthService.user.noticeAccountType === noticeAccountConstants.INVESTOR || userAuthService.user.noticeAccountType === noticeAccountConstants.BOTH)" [ngClass]="{ active: activeIfContainsSetting('/web/notice-account/investment') }">
+              <a>
+                <div>
+                  <img src="assets/img/icon/icon-investment-dark.svg" alt="trade-log">
+                    <span>Investments</span>
+                </div>
+                <div>
+                  <span class="badge trade-badge">{{noticeAccountTradesCount?.investmentLogCount || 0}}</span>
+                </div>
+              </a>
+            </li>
+            <li routerLink="/web/notice-account/borrower" *ngIf="hasAccessControl(product.NOTICE_ACCOUNT, 'READ_BORROWER_LIST') && (userAuthService.user.noticeAccountType === noticeAccountConstants.BORROWER || userAuthService.user.noticeAccountType === noticeAccountConstants.BOTH || userAuthService.user?.isAdmin === 'Y')" [ngClass]="{ active: activeIfContainsSetting('/web/notice-account/borrower') }">
+              <a>
+                <div>
+                  <img src="assets/img/icon/icon-borrowing-dark.svg" alt="trade-log">
+                  <span>{{ userAuthService.user?.isAdmin === 'Y' ? 'Notice Accounts': 'Borrowings' }}</span>
+                </div>
+                <div>
+                  <span class="badge pull-right trade-badge">{{noticeAccountTradesCount?.borrowerLogCount || 0}}</span>
+                </div>
+              </a>
+            </li>
+            <li routerLink="/web/notice-account/trade-logs" *ngIf="hasAccessControl(product.NOTICE_ACCOUNT, 'READ_TRADE_LOGS')" [ngClass]="{ active: activeIfContainsSetting('/web/notice-account/trade-logs') }">
+              <a>
+                <div>
+                  <img src="assets/img/icon/icon-na-trade-log-dark.svg" alt="trade-log">
+                  <span>Trade Logs</span>
+                </div>
+                <div>
+                  <span class="badge trade-badge">{{noticeAccountTradesCount?.totalCount || 0}}</span>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </ng-container>
+        <ng-container *ngIf="activeIfContains('/web/repo')">
+          <small>TRADE</small>
+          <ul class="sub-menu currencies-tab show" id="repoMarket">
+            <li class="repo-market-tab" *ngIf="hasAccessToProduct(product.REPO) && userAuthService.platform.host === platformConstant.INSTIMATCH && (userAuthService?.user?.repoClient || userAuthService.user.isAdmin === 'Y')" [ngClass]="{active: activeIfContains('/web/repo/market')}">
+              <a id="mycdropdown" (click)="goToRepoMarket(repoMarketCurrencyTab)">
+                <div>
+                  <img src="assets/img/icon/order-book-dark.svg" alt="order-book">
+                  <span>Orderbook</span>
+                </div>
+              </a>
+            </li>
+          <li routerLink="/web/repo/settings" *ngIf="hasAccessControl('REPO', 'READ_MARKET_SETTINGS')" [ngClass]="{active: activeIfContainsSetting('/web/repo/settings')}">
+            <a>
+              <div>
+                <img src="assets/img/icon/icon-setting.svg" alt="setting">
+                <span>Repo Settings</span>
+              </div>
+            </a>
+          </li>
+          <li (click)="navigateToRoute('/web/repo/extendable-trades')" *ngIf="hasAccessControl('REPO', 'READ_EXTENDABLE_TRADE')" [ngClass]="{ active: activeIfContainsSetting('/web/repo/extendable-trades') }">
+            <a>
+              <div>
+                <img src="assets/img/icon/maturity-list-dark.svg" alt="maturity-list">
+                <span>Extendable Trades</span>
+              </div>
+              <div>
+                <span class="badge pull-right trade-badge" id="tradeCount">{{repoTradeLogsCount?.extendedTradesCount}}</span>
+              </div>
+            </a>
+          </li>
+          <li (click)="navigateToRoute('/web/repo/trades')" *ngIf="hasAccessControl('REPO', 'READ_TRADE_LOGS')" [ngClass]="{ active: activeIfContainsSetting('/web/repo/trades') }">
+            <a>
+              <div>
+                <img src="assets/img/icon/trade-log-dark.svg" alt="trade-log">
+                <span>Trade Logs</span>
+              </div>
+              <div>
+                <span class="badge trade-badge" id="tradeCount">{{repoTradeLogsCount?.tradeLogsCount}}</span>
+              </div>
+            </a>
+          </li>
+          </ul>
+        </ng-container>
+        <ng-container *ngIf="activeIfContains('/web/mosaic') && hasAccessToProduct(product.MONEY_MARKET_FUNDS) && userAuthService.companyDetails?.showMMF && hasAccessControl(product.MONEY_MARKET_FUNDS, 'READ_MONEY_MARKET_FUNDS')">
+          <ul class="sub-menu currencies-tab pt-3" id="funds">
+            <li container="body" placement="right"
+              [ngClass]="{active: activeIfContainsSetting('/web/mosaic/mosaic-liquidity')}">
+              <a (click)="navigateToRoute('/web/mosaic/mosaic-liquidity', true)">
+                <div>
+                  <img class="insti-feature-icon" src="assets/img/icon/money-market-funds-icon.svg" alt="money-market-funds-icon" /> Fund Yield
+                </div>
+                <p class="badge badge-new bg-orange">New</p>
+                <span class="pull-right" *ngIf="activeIfContains('/web/mosaic/mosaic-liquidity')">
+                </span>
+              </a>
+            </li>
+            <li>
+              <a class="text-nowrap" (click)="goToExternalLink('Mosaic')">
+                <div class="mm-funds" ngbTooltip="Please contact your relationship manager to get access to Goldman Sach's Mosaic Platform." container="body" placement="right">
+                  <img class="insti-feature-icon" src="assets/img/logo/goldman-sachs.png" alt="goldman-sachs"> <div>Mosaic by Goldman <br> Sachs</div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </ng-container>
+        <ng-container *ngIf="userAuthService.platform.host === platformConstant.MUNIX">
+          <li class="counterpart-credit-report-tab">
+            <a class="cursor-pointer" (click)="navigateToCpCreditReport()">
+              <img class="insti-mosaic-icon" src="assets/img/icon/credit-report.svg" alt="credit-report"> Counterpart Credit Report
+            </a>
+          </li>
+        </ng-container>
+        <li class="single-product" data-toggle="collapse" *ngIf="activeIfContains('/web/trading-partner') && hasAccessToProduct(product.TRADING_PARTNER) && hasAccessControl(product.TRADING_PARTNER, 'READ_TRADING_PARTNERS')" [ngClass]="{ active: activeIfContains('/web/trading-partner') }">
+          <a (click)="navigateToRoute('/web/trading-partner', true)">
+            <div>
+              <img src="assets/img/icon/icon-trading-partner-gray.svg" alt="trading-partner">
+              <span>Trading Partners</span>
+            </div>
+          </a>
+        </li>
+        <li class="single-product" data-toggle="collapse" *ngIf="activeIfContains('/web/thought-exchange') && hasAccessToProduct(product.THOUGHT_EXCHANGE) && hasAccessControl(product.THOUGHT_EXCHANGE, 'READ_THOUGHT_EXCHANGE') && userAuthService.platform.host === platformConstant.MUNIX"
+            [ngClass]="{ active: activeIfContains('/web/thought-exchange') }">
+        </li>
+        <li class="single-product" data-toggle="collapse" *ngIf="activeIfContains('/web/calendar/economic-calendar') && hasAccessToProduct(product.ECONOMIC_CALENDAR) && hasAccessControl(product.ECONOMIC_CALENDAR, 'READ_ECONOMIC_CALENDAR')" [ngClass]="{ active: activeIfContains('/web/calendar/economic-calendar') }">
+          <a (click)="navigateToRoute('/web/calendar/economic-calendar', true)">
+           <div>
+            <img src="assets/img/icon/icon-economic-calendar.svg" alt="eco-calendar">
+            <span>Economic Calendar</span>
+           </div>
+          </a>
+        </li>
+        <li class="single-product" data-toggle="collapse" data-target="#holiday-calendar" *ngIf="activeIfContains('/web/calendar/holiday-calendar')"
+            [ngClass]="{ active: activeIfContains('/web/calendar/holiday-calendar') }">
+          <a (click)="navigateToRoute('/web/calendar/holiday-calendar', true)">
+            <div>
+              <img src="assets/img/icon/icon-holidays-calendar.svg" alt="holiday-calendar">
+              <span>Holiday Calendar</span>
+            </div>
+          </a>
+        </li>
+        <li class="sidebar-border" *ngIf="hasAccessToProduct(product.ADMIN_COCKPIT)"></li>
+        <li *ngIf="hasAccessToProduct(product.ADMIN_COCKPIT)" class="p-0 single-product">
+          <a>
+            <span class="position-static d-contents" (click)="showHideAdminCockpit()">
+              <img src="assets/img/icon/icon-setting.svg" alt="setting">
+              <span>Admin Cockpit</span>
+              <i class=" ml-2 collapsed fas fa-plus" *ngIf="!showSubMenus"></i>
+              <i class=" ml-2 collapsed fa fa-minus" *ngIf="showSubMenus"></i>
+              <span class="pull-right">
+                <i class="fa fa-angle-right" *ngIf="!showSubMenus"></i>
+                <i class="fa fa-angle-down" *ngIf="showSubMenus"></i>
+              </span>
+            </span>
+          </a>
+        </li>
+        <ul #adminCockpit class="sub-menu pl-5" *ngIf="showSubMenus">
+          <li *ngIf="hasAccessControl(product.ADMIN_COCKPIT, 'READ_USER_LEVEL_CONTROL')" [ngClass]="{ active: activeIfContains('/web/admin/user-level') }">
+            <a class="d-inline" (click)="navigateToRoute('/web/admin/user-level', true)">
+              User Level Control
+            </a>
+          </li>
+          <li *ngIf="hasAccessControl(product.ADMIN_COCKPIT, 'READ_CLIENT_LEVEL_CONTROL')" [ngClass]="{ active: activeIfContains('/web/admin/client-level') }">
+            <a class="d-inline" (click)="navigateToRoute('/web/admin/client-level', true)">
+              Client Level Control
+            </a>
+          </li>
+          <li *ngIf="hasAccessControl(product.ADMIN_COCKPIT, 'READ_PLATFORM_LEVEL_SETTINGS')" [ngClass]="{ active: activeIfContains('/web/dashboard') }">
+            <a class="d-inline" (click)="navigateToRoute('/web/dashboard', true)">
+              Platform Level Settings
+            </a>
+          </li>
+        </ul>
+        <li (click)="clickOnCaptain()" *ngIf="userAuthService.user?.rightsOfMmCaptain?.isCaptain">
+          <a>
+            <i class="fa fa-list"></i> Captain Cockpit
+            <span class="pull-right trades-arrow">
+              <i class="fa fa-angle-right "></i>
+            </span>
+          </a>
+        </li>
+      </ul>
+      <li class="sidebar-contact mt- px-0">
+        <small class="chat-label">
+             {{userAuthService.platform.host === platformConstant.MUNIX ? 'MunixChat' : 'CHAT'}}
+        </small>
+        <div class="searchbar">
+          <input class="search_input" type="text" spellcheck="false" autocomplete="off" name="" placeholder="Search..."
+            (keyup)="chatService.filterUsers($event.target.value)" [(ngModel)]="chatService.searchedUserText" />
+          <a class="search_icon"><i class="fas fa-search"></i></a>
+        </div>
+        <ul *ngIf="(chatService?.adminUsers?.length || chatService?.normalUsers?.length)">
+          <ng-container *ngIf="chatService?.adminUsers?.length">
+            <ng-container *ngFor="let admin of chatService.adminUsers; let index = index">
+              <li class="li-chat-list" (click)="chatService.adminCompanies[index]['companyName'] !== chatCompanyName ? expand(chatService.adminCompanies[index]['companyName']) : collapse()" (mouseover)="hideUserTooltip(true)">
+                <div>
+                  <div class="chat-list-names">
+                    <img class="party-platform-im" *ngIf="userAuthService.platform.host == platformConstant.INSTIMATCH" src="assets/img/logo/IM.svg" alt="IM">
+                    <img class="party-platform-mx" *ngIf="userAuthService.platform.host == platformConstant.MUNIX" src="assets/img/logo/MX.svg" alt="MX">
+                  </div>
+                </div>
+                <div>
+                  <div class="online-contact-div cursor-pointer">
+                    <span class="float-left comapnay-name-tab">
+                      {{ chatService.adminCompanies[index]['displayName'] || chatService.adminCompanies[index]['companyName'] }}
+                    </span>
+                    <span class="float-right badge badge-success" *ngIf="admin.totalSeenCount !== 0">
+                      {{ admin.totalSeenCount }}
+                    </span>
+                  </div>
+                </div>
+                <div class="chat-list-arrows d-flex justify-content-center cursor-pointer">
+                  <i class="fa fa-chevron-right hover-cursor pull-right cursor-right m-0"
+                    *ngIf="chatService.adminCompanies[index]['companyName'] !== chatCompanyName"></i>
+                  <i class="fa fa-chevron-down hover-cursor pull-right cursor-right m-0"
+                    *ngIf="chatService.adminCompanies[index]['companyName'] === chatCompanyName"></i>
+                </div>
+              </li>
+              <ng-container *ngIf="chatService.adminCompanies[index]['companyName'] === chatCompanyName">
+                <li class="li-chat-list" [ngClass]="userDetails.user && userDetails.showTooltip && userDetails.activeUser === user._id && userDetails.activeCompany === user.company_id?._id ? 'tooltiparea' : ''" *ngFor="let user of admin">
+                  <div>
+                    <div class="chat-list-names">
+                      <span class="chat-user-status">
+                        <i class="fa fa-circle user-active m-0" *ngIf="user['loggedIn'] === 'Y'"></i>
+                        <i class="fa fa-circle user-inactive m-0" *ngIf="user['loggedIn'] === 'N'"></i>
+                        <i class="fa fa-circle user-away m-0" *ngIf="user['loggedIn'] === 'A'"></i>
+                      </span>
+                      <span>{{user["name"] ? user["name"][0] : ''}}{{user["lastname"] ? user["lastname"][0] : ''}}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="online-contact-div">
+                      <div>
+                        <span [class]="hasAccessControl('CHAT', 'WRITE_CHAT') ? 'cursor-pointer' : 'cursor-default'" *ngIf="user['chatAccess'] && userAuthService.user?.['chatAccess'] === 'Y'" (click)="openChatOnClick(user)">
+                          <span (mouseover)="showUserTooltip(user)" (mouseout)="hideUserTooltip()">{{ user["userFullName"] }}</span><br />
+                          <em (mouseover)="showUserTooltip(user)" (mouseout)="hideUserTooltip()" class="em-content-size">{{ user.company_id.entity?.display_name || user["companyName"] }}</em>
+                        </span>
+                        <span class="cursor-default" *ngIf="!user['chatAccess'] || userAuthService.user['chatAccess'] !== 'Y'">
+                          <span (mouseover)="showUserTooltip(user)" (mouseout)="hideUserTooltip()">{{ user["userFullName"] }}</span><br />
+                          <em (mouseover)="showUserTooltip(user)" (mouseout)="hideUserTooltip()" class="em-content-size">{{ user.company_id.entity?.display_name || user["companyName"] }}</em>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="chat-list-arrows d-flex justify-content-center">
+                    <div class="chat-list-icons cursor-pointer" *ngIf="hasAccessControl('CHAT', 'WRITE_CHAT') && user['chatAccess'] && userAuthService.user?.['chatAccess'] === 'Y'">
+                      <span class="chat-list-icon-badge badge badge-success" *ngIf="user.seencount != 0">
+                        {{ user.seencount }}
+                      </span>
+                      <span (click)='openChatOnClick(user)'>
+                        <img class="mr-3" *ngIf="userAuthService.user.skinversion !== skinVersion.SKIN2" src="assets/img/icon/chat-white.svg"/>
+                        <img class="mr-3" *ngIf="userAuthService.user.skinversion === skinVersion.SKIN2" src="assets/img/icon/chat.svg"/>
+                      </span>
+                    </div>
+                  </div>
+                </li>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="chatService?.normalUsers?.length">
+            <li class="li-chat-list" [ngClass]="userDetails.user && userDetails.showTooltip && userDetails.activeUser === user._id && userDetails.activeCompany === user.company_id?._id ? 'tooltiparea' : ''" *ngFor="let user of chatService.normalUsers">
+              <div>
+                <div class="chat-list-names">
+                  <span class="chat-user-status">
+                    <i class="fa fa-circle user-active m-0" *ngIf="user['loggedIn'] === 'Y'"></i>
+                    <i class="fa fa-circle user-inactive m-0" *ngIf="user['loggedIn'] === 'N'"></i>
+                    <i class="fa fa-circle user-away m-0" *ngIf="user['loggedIn'] === 'A'"></i>
+                  </span>
+                  <span>{{user["name"] ? user["name"][0] : ''}}{{user["lastname"] ? user["lastname"][0] : ''}}</span>
+                </div>
+              </div>
+              <div>
+                <div class="online-contact-div">
+                  <div>
+                    <span [class]="hasAccessControl('CHAT', 'WRITE_CHAT') ? 'cursor-pointer' : 'cursor-default'" *ngIf="user['chatAccess'] && userAuthService.user?.['chatAccess'] === 'Y'" (click)="openChatOnClick(user)">
+                    <span (mouseover)="showUserTooltip(user)" (mouseout)="hideUserTooltip()">{{ user["userFullName"] }}</span><br />
+                    <em (mouseover)="showUserTooltip(user)" (mouseout)="hideUserTooltip()" class="em-content-size" [title]="user.company_id?.entity?.display_name ? user['companyName'] : ''">
+                      {{ user.company_id?.entity?.display_name || user["companyName"] }}
+                    </em>
+                    </span>
+                    <span class="cursor-default" *ngIf="!user['chatAccess'] || userAuthService.user && (!userAuthService.user['chatAccess'] || userAuthService.user['chatAccess'] === 'N')">
+                      <span (mouseover)="showUserTooltip(user)" (mouseout)="hideUserTooltip()">{{ user["userFullName"] }}</span><br />
+                      <em (mouseover)="showUserTooltip(user)" (mouseout)="hideUserTooltip()" class="em-content-size" [title]="user.company_id?.entity?.display_name ? user['companyName'] : ''">
+                        {{ user.company_id?.entity?.display_name || user["companyName"] }}
+                      </em>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="chat-list-arrows d-flex justify-content-center">
+                <div class="chat-list-icons cursor-pointer" *ngIf="hasAccessControl('CHAT', 'WRITE_CHAT') && user['chatAccess'] && userAuthService.user?.['chatAccess'] === 'Y'">
+                  <span class="chat-list-icon-badge badge badge-success" *ngIf="user.seencount != 0">
+                    {{ user.seencount }}
+                  </span>
+                  <span (click)="openChatOnClick(user)">
+                    <img class="mr-3" *ngIf="userAuthService.user.skinversion !== skinVersion.SKIN2" src="assets/img/icon/chat-white.svg"/>
+                    <img class="mr-3" *ngIf="userAuthService.user.skinversion === skinVersion.SKIN2" src="assets/img/icon/chat.svg"/>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ng-container>
+        </ul>
+        <ul *ngIf="!chatService?.adminUsers?.length && !chatService?.normalUsers?.length && chatService.chatContactListFetched">
+          <li class="no-hover">
+            <div class="w-100 text-center">
+              <img class="contact-list-search-empty no-data-found-img" *ngIf="userAuthService.user.skinversion !== skinVersion.SKIN2" src="assets/img/icon/no-data-found-black-layout.svg" alt="No-data-found">
+              <img class="contact-list-search-empty no-data-found-img" *ngIf="userAuthService.user.skinversion === skinVersion.SKIN2" src="assets/img/icon/no-data-found-white-layout.svg" alt="No-data-found">
+            </div>
+          </li>
+        </ul>
+        <ng-container *ngIf="!chatService.chatContactListFetched">
+          <li class="no-hover">
+            <div class="w-100 text-center data-fetching">
+              <span class="data-loading">Loading...</span>
+            </div>
+          </li>
+        </ng-container>
+      </li>
+    </div>
+  </div>
+  
+  <!-- <div class="user-details-tooltip" *ngIf="userDetails.user && userDetails.showTooltip" (mouseover)="showUserTooltip(userDetails.user)" (mouseout)="hideUserTooltip()">
+    <div class="user-details-tooltip-wrapper">
+      <span class="tooltiptextarea">
+        <div class="m-3 position-relative">
+          <button type="button" class="close close-user-tooltip-button" (click)="clearUserTooltipDetail()">&times;</button>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="tooltip-chat-list-names mr-2">
+                    <span class="tooltip-chat-user-status">
+                      <i class="fa fa-circle user-active m-0" *ngIf="userDetails.user['loggedIn'] === 'Y'"></i>
+                      <i class="fa fa-circle user-inactive m-0" *ngIf="userDetails.user['loggedIn'] === 'N'"></i>
+                      <i class="fa fa-circle user-away m-0" *ngIf="userDetails.user['loggedIn'] === 'A'"></i>
+                    </span>
+                    <span>{{userDetails.user["name"] ? userDetails.user["name"][0] : ''}}{{userDetails.user["lastname"] ? userDetails.user["lastname"][0] : ''}}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="chat-user-name">
+                    <h4>{{ userDetails.user["userFullName"] }}</h4>
+                    <span *ngIf="userDetails.user['position'] ">{{ userDetails.user["position"]  }}</span>
+                    <p>{{userDetails.user['company_id']['entity']['display_name'] || userDetails.user['companyName']}}</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="quick-action-chat-icon d-flex justify-content-start align-items-center">
+            <img src="assets/img/icon/chat.svg" alt="Chat" class="cursor-pointer" *ngIf="hasAccessControl('CHAT', 'WRITE_CHAT') && userDetails.user['chatAccess'] && userAuthService.user?.['chatAccess'] === 'Y'" (click)="showChatFromTooltip(userDetails.user)">
+            <a [href]="'mailto:'+userDetails.user['email']" target="_blank"> <i class="far fa-envelope pl-3"></i></a>
+            <span class="pl-3"><i class="fa fa-handshake cursor-pointer" *ngIf="hasAccessControl(product.TRADING_PARTNER, 'READ_TRADING_PARTNER_DETAILS')" ngbTooltip="View trading partner" (click)="openTradingParterView(userDetails?.user?.company_id?._id)"></i></span>
+          </div>
+          <hr>
+          <div class="quick-action-chat-input d-flex" *ngIf="hasAccessControl('CHAT', 'WRITE_CHAT') && userDetails.user['chatAccess'] && userAuthService.user && userAuthService.user['chatAccess'] === 'Y'">
+            <input class="form-control" type="text" spellcheck="false" autocomplete="off" placeholder="Send a quick message" name="toolipMessage" (keyup.enter)="sendMessageFromTooltip(tooltipMessage, userDetails.user)" [(ngModel)]="tooltipMessage"> 
+            <i class="far fa-paper-plane pl-2 pt-2 cursor-pointer" aria-hidden="true" (click)="sendMessageFromTooltip(tooltipMessage, userDetails.user)"></i>
+          </div>
+          <div class="contact-details">
+            <div class="contact-details-head">Contact</div>
+            <p *ngIf="userDetails.user['telephone']">
+              <i class="fa fa-phone mr-2"></i>{{ userDetails.user["telephone"] }}
+              <span class="copy-details">  
+                <a (click)="commonFunctionsService.copyToClipboard(userDetails.user['telephone'], adminTooltipPhone);" ngbTooltip="Copy to clipboard" class="btn btn-white btn-round btn-just-icon">
+                  <i class="far fa-clone"><span class="detail-copied" ngbTooltip="Copied" triggers="manual" #adminTooltipPhone="ngbTooltip">
+                  </span></i>
+                </a>
+              </span>
+            </p>
+            <p>
+              <i class="fas fa-envelope mr-2"></i>{{ userDetails.user["email"] }}
+              <span class="copy-details">
+                <a (click)="commonFunctionsService.copyToClipboard(userDetails.user['email'], adminTooltipEmail);" ngbTooltip="Copy to clipboard" class="btn btn-white btn-round btn-just-icon">
+                  <i class="far fa-clone"><span class="detail-copied" ngbTooltip="Copied" triggers="manual" #adminTooltipEmail="ngbTooltip">
+                  </span></i>
+                </a>
+              </span>
+            </p>
+            <p class="d-flex justify-content-start align-items-center" *ngIf="userDetails.user['company_id']['entity']['zipcode'] || userDetails.user['company_id']['entity']['country'] || userDetails.user['company_id']['entity']['city']"><i class="fas fa-map-marker-alt float-left mr-2"></i>{{ userDetails.user["company_id"]["entity"]["zipcode"] ? userDetails.user["company_id"]["entity"]["zipcode"] + ', ' : '' }}  {{ userDetails.user["company_id"]["entity"]["city"] ? userDetails.user["company_id"]["entity"]["city"] + ', ' : '' }} {{userDetails.user["company_id"]["entity"]["country"]}}</p><br>
+          </div>
+        </div>
+      </span>
+    </div>
+  </div> -->
+            <!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
+          <!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
+          <!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
+          <!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
