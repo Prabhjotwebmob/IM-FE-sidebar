@@ -64,7 +64,7 @@
           </button>
         </div>
       </li>
-      <ul id="menu-content" class="menu-content collapse out position-relative">
+      <!-- <ul id="menu-content" class="menu-content collapse out position-relative">
         <ng-container *ngIf="activeIfContains('/web/money-market')">
           <small>TRADE</small>
           <ul class="sub-menu currencies-tab show" id="currencies">
@@ -310,8 +310,9 @@
             </span>
           </a>
         </li>
-      </ul>
-      <li class="sidebar-contact mt- px-0">
+      </ul> -->
+      <div #chatComponent></div>
+      <!-- <li class="sidebar-contact mt- px-0">
         <small class="chat-label">
              {{userAuthService.platform.host === platformConstant.MUNIX ? 'MunixChat' : 'CHAT'}}
         </small>
@@ -447,7 +448,7 @@
             </div>
           </li>
         </ng-container>
-      </li>
+      </li> -->
     </div>
   </div>
   

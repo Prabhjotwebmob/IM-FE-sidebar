@@ -141,24 +141,26 @@ product = {
     });
   }
   goToMoneyMarketTab(moneyMarketCurrencyTab?) {
-    const isCollapsed = moneyMarketCurrencyTab?.className?.includes('collapsed');
-    if(this.userAuthService.platform.host == this.platformConstant.MUNIX) {
-      this.navigateToRoute('/web/money-market/GBP', true);
-    } else {
-      // this.continousApiService.sortCurrenciesOnLoad(this.userAuthService.user.currencySortOrder);
-      // let enabledCurrencies = this.userAuthService.user.enabledCurrency && this.continousApiService.sortEnabledCurrencies(this.userAuthService.user.enabledCurrency).split(',') || [];
-      // let activeCurrency = enabledCurrencies.length > 0 && enabledCurrencies[0] || '';
-      // activeCurrency && this.navigateToRoute('/web/money-market/' + activeCurrency, true);
-    }
-    isCollapsed && moneyMarketCurrencyTab?.click();
+    // const isCollapsed = moneyMarketCurrencyTab?.className?.includes('collapsed');
+    // if(this.userAuthService.platform.host == this.platformConstant.MUNIX) {
+    //   this.navigateToRoute('/web/money-market/GBP', true);
+    // } else {
+    //   this.continousApiService.sortCurrenciesOnLoad(this.userAuthService.user.currencySortOrder);
+    //   let enabledCurrencies = this.userAuthService.user.enabledCurrency && this.continousApiService.sortEnabledCurrencies(this.userAuthService.user.enabledCurrency).split(',') || [];
+    //   let activeCurrency = enabledCurrencies.length > 0 && enabledCurrencies[0] || '';
+    //   activeCurrency && this.navigateToRoute('/web/money-market/' + activeCurrency, true);
+    // }
+    // isCollapsed && moneyMarketCurrencyTab?.click();
+    this.navigateToRoute('/web/money-market/GBP', true);
   }
 
   goToNoticeAccountTab(noticeAccountTab?) {
     const isCollapsed = noticeAccountTab?.className?.includes('collapsed');
     // let enabledCurrencies = this.userAuthService.user?.noticeAccount?.enabledCurrencies && this.continousApiService.sortEnabledCurrencies(this.userAuthService.user?.noticeAccount?.enabledCurrencies).split(',') || [];
-    let activeCurrency = '';
+    // let activeCurrency = '';
     // let activeCurrency = enabledCurrencies.length > 0 && enabledCurrencies[0] || '';
-    activeCurrency && this.navigateToRoute('/web/notice-account/' + activeCurrency, true);
+    // activeCurrency && this.navigateToRoute('/web/notice-account/' + activeCurrency, true);
+    this.navigateToRoute('/web/notice-account/CHF', true);
     isCollapsed && noticeAccountTab?.click();
   }
   navigateToMosaic(moneyMarketFundsTab?) {
