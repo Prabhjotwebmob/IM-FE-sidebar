@@ -35,7 +35,7 @@ module.exports = {
         },
 
         remotes: {
-            "SidebarComponent": "http://localhost:3005/remoteEntry.js",
+            "SidebarComponent": "http://localhost:4001/remoteEntry.js",
 
         },
         shared: {

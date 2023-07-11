@@ -1,6 +1,9 @@
 import { ViewContainerRef, AfterViewInit, ViewChild, Component, ComponentFactoryResolver } from '@angular/core';
 import { loadRemoteModule } from './utils/federation-utils';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { loginSuccess } from '../../../IM-FE-libs/store/actions/auth.actions';
 
 @Component({
   selector: 'app-root',
@@ -8,62 +11,65 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class SidebarComponent implements AfterViewInit {
-  @ViewChild('chatComponent', {read: ViewContainerRef}) chatComponent;
+  @ViewChild('chatComponent', { read: ViewContainerRef }) chatComponent;
   platformConstant = {
     INSTIMATCH: 'Instimatch',
     MUNIX: 'Munix'
-}
-liveRequestsCount = 0
-userAuthService = {
-  platform:{
-    host: 'Instimatch'
-  },
-  companyDetails:{
-    showMMF:true
-  },
-  user:{
-    isAdmin:'Y',
-    noticeAccountType: true,
-    rightsOfMmCaptain:{
-      isCaptain: true
+  }
+  liveRequestsCount = 0
+  userAuthService = {
+    platform: {
+      host: 'Instimatch'
+    },
+    companyDetails: {
+      showMMF: true
+    },
+    user: {
+      isAdmin: 'Y',
+      noticeAccountType: true,
+      rightsOfMmCaptain: {
+        isCaptain: true
+      }
     }
   }
-}
-showSubMenus = true
-Tooltip = {
-  dontHavePermission: "You don't have permission to take this action.",
-  dontHavePermissionToReadSettings: "You don't have permission to read these settings.",
-  dontHavePermissionToReadMarket: "You don't have permission to read the market.",
-}
-chatService={
-  chatContactListFetched:false,
-  chatService: [],
-  normalUsers:[],
-  adminUsers:[],
-  searchedUserText:"",
-  filterUsers: function(text) {
-    return null
+  showSubMenus = true
+  Tooltip = {
+    dontHavePermission: "You don't have permission to take this action.",
+    dontHavePermissionToReadSettings: "You don't have permission to read these settings.",
+    dontHavePermissionToReadMarket: "You don't have permission to read the market.",
   }
-}
-product = {
-  REPO: 'REPO',
-  MONEY_MATCH: 'MONEY_MATCH',
-  NOTICE_ACCOUNT: 'NOTICE_ACCOUNT',
-  ADMIN_COCKPIT: 'ADMIN_COCKPIT',
-  CHAT: 'CHAT',
-  MONEY_MARKET_FUNDS: 'MONEY_MARKET_FUNDS',
-  TRADING_PARTNER: 'TRADING_PARTNER',
-  THOUGHT_EXCHANGE: 'THOUGHT_EXCHANGE',
-  ECONOMIC_CALENDAR: 'ECONOMIC_CALENDAR',
-}
+  chatService = {
+    chatContactListFetched: false,
+    chatService: [],
+    normalUsers: [],
+    adminUsers: [],
+    searchedUserText: "",
+    filterUsers: function (text) {
+      return null
+    }
+  }
+  product = {
+    REPO: 'REPO',
+    MONEY_MATCH: 'MONEY_MATCH',
+    NOTICE_ACCOUNT: 'NOTICE_ACCOUNT',
+    ADMIN_COCKPIT: 'ADMIN_COCKPIT',
+    CHAT: 'CHAT',
+    MONEY_MARKET_FUNDS: 'MONEY_MARKET_FUNDS',
+    TRADING_PARTNER: 'TRADING_PARTNER',
+    THOUGHT_EXCHANGE: 'THOUGHT_EXCHANGE',
+    ECONOMIC_CALENDAR: 'ECONOMIC_CALENDAR',
+  }
+  token$: Observable<String>;
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private router: Router,
-    ) {
+    private store: Store<{ auth: String }>
+  ) {
+    this.token$ = store.pipe(select('auth'));
   }
   ngAfterViewInit(): void {
     loadRemoteModule({
-      remoteEntry: "http://localhost:3000/remoteEntry.js",
+      remoteEntry: "http://localhost:4003/remoteEntry.js",
       remoteName: "chat",
       exposedModule: "ChatComponent"
     })
@@ -131,7 +137,7 @@ product = {
       console.error("Navigation Error", err);
       const chunkFailedMessage = /Loading chunk/;
       const errorText = err?.error?.message || err?.message || '';
-      if(checkError && (chunkFailedMessage.test(errorText) || chunkFailedMessage.test(errorText))) {
+      if (checkError && (chunkFailedMessage.test(errorText) || chunkFailedMessage.test(errorText))) {
         await Promise.all((await caches.keys()).map(caches.delete));
         this.navigateToRoute(routeToNavigate);
       } else {
@@ -167,5 +173,8 @@ product = {
     const isCollapsed = moneyMarketFundsTab?.className?.includes('collapsed');
     this.navigateToRoute('/web/mosaic/mosaic-liquidity');
     isCollapsed && moneyMarketFundsTab?.click();
+  }
+  changeToken() {
+    this.store.dispatch(loginSuccess({ token: "myToken" + new Date().getTime(), redirect: true }));
   }
 }

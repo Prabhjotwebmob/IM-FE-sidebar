@@ -10,61 +10,65 @@
 </div> -->
 
 <div class="left-nav-side-menu blur-bg">
-    <div class="d-flex align-items-start">
-      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <button class="nav-link" type="button" role="tab" ngbTooltip="MoneyMatch" (click)="goToMoneyMarketTab(moneyMarketCurrencyTab)"
-        [ngClass]="{active: activeIfContains('/web/money-market')}" *ngIf="hasAccessToProduct('MONEY_MATCH')">MM</button>
-        <button class="nav-link" type="button" role="tab" ngbTooltip="RepoBlick" (click)="goToRepoMarket(repoMarketCurrencyTab)"
-        [ngClass]="{active: activeIfContains('/web/repo')}" *ngIf="hasAccessToProduct(product.REPO) && userAuthService.platform.host === platformConstant.INSTIMATCH && (userAuthService?.user?.repoClient || userAuthService.user.isAdmin === 'Y')">RB</button>
-        <button class="nav-link" type="button" role="tab" ngbTooltip="NoticeAccount" (click)="goToNoticeAccountTab(noticeAccountCurrencyTab)"
-        [ngClass]="{active: activeIfContains('/web/notice-account') && !activeIfContainsSetting('/web/notice-account/settings')}" *ngIf="hasAccessToProduct(product.NOTICE_ACCOUNT) && (userAuthService.user?.noticeAccountType || userAuthService.user.isAdmin === 'Y')">NA</button>
-        <button class="nav-link" type="button" role="tab" ngbTooltip="MoneyMarketFunds" (click)="navigateToMosaic(moneyMarketFundsTab)"
-        [ngClass]="{active: activeIfContains('/web/mosaic')}" *ngIf="hasAccessToProduct(product.MONEY_MARKET_FUNDS) && userAuthService.companyDetails?.showMMF && hasAccessControl(product.MONEY_MARKET_FUNDS, 'READ_MONEY_MARKET_FUNDS')">MF</button>
-        <button class="nav-link" type="button" role="tab" ngbTooltip="ThoughtExchange" (click)="navigateToRoute('/web/thought-exchange')"
-        [ngClass]="{active: activeIfContains('/web/thought-exchange')}" *ngIf="activeIfContains('/web/thought-exchange') && hasAccessToProduct(product.THOUGHT_EXCHANGE) && hasAccessControl(product.THOUGHT_EXCHANGE, 'READ_THOUGHT_EXCHANGE') && userAuthService.platform.host === platformConstant.MUNIX">TE</button>
-      </div>
+  <div class="d-flex align-items-start">
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+      <button class="nav-link" type="button" role="tab" ngbTooltip="MoneyMatch"
+        (click)="goToMoneyMarketTab(moneyMarketCurrencyTab)" [ngClass]="{active: activeIfContains('/web/money-market')}"
+        *ngIf="hasAccessToProduct('MONEY_MATCH')">MM</button>
+      <button class="nav-link" type="button" role="tab" ngbTooltip="RepoBlick"
+        (click)="goToRepoMarket(repoMarketCurrencyTab)" [ngClass]="{active: activeIfContains('/web/repo')}"
+        *ngIf="hasAccessToProduct(product.REPO) && userAuthService.platform.host === platformConstant.INSTIMATCH && (userAuthService?.user?.repoClient || userAuthService.user.isAdmin === 'Y')">RB</button>
+      <button class="nav-link" type="button" role="tab" ngbTooltip="NoticeAccount"
+        (click)="goToNoticeAccountTab(noticeAccountCurrencyTab)"
+        [ngClass]="{active: activeIfContains('/web/notice-account') && !activeIfContainsSetting('/web/notice-account/settings')}"
+        *ngIf="hasAccessToProduct(product.NOTICE_ACCOUNT) && (userAuthService.user?.noticeAccountType || userAuthService.user.isAdmin === 'Y')">NA</button>
+      <button class="nav-link" type="button" role="tab" ngbTooltip="MoneyMarketFunds"
+        (click)="navigateToMosaic(moneyMarketFundsTab)" [ngClass]="{active: activeIfContains('/web/mosaic')}"
+        *ngIf="hasAccessToProduct(product.MONEY_MARKET_FUNDS) && userAuthService.companyDetails?.showMMF && hasAccessControl(product.MONEY_MARKET_FUNDS, 'READ_MONEY_MARKET_FUNDS')">MF</button>
+      <button class="nav-link" type="button" role="tab" ngbTooltip="ThoughtExchange"
+        (click)="navigateToRoute('/web/thought-exchange')"
+        [ngClass]="{active: activeIfContains('/web/thought-exchange')}"
+        *ngIf="activeIfContains('/web/thought-exchange') && hasAccessToProduct(product.THOUGHT_EXCHANGE) && hasAccessControl(product.THOUGHT_EXCHANGE, 'READ_THOUGHT_EXCHANGE') && userAuthService.platform.host === platformConstant.MUNIX">TE</button>
     </div>
   </div>
-  <div class="nav-side-menu blur-bg">
-    <div class="product-name">
-      <img [src]="getHeaderLogo()" alt="...">
-      <h2>{{getHeaderMainText()}}</h2>
-    </div>
-    <div class="menu-list" [ngClass]="userAuthService.platform.host == platformConstant.MUNIX ? 'munix-menu-list' : 'im-menu-list'">
-      <li class="sidenav-btn">
-        <div class="btn-div">
-          <button type="button" (click)="openQuotes('Live')" class="btn btn-secondary"
-          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'"
-          >
-            My Quotes
-          </button>
-          <button type="button" (click)="uploadQuotes()" class="btn btn-secondary ml-0"
-          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'"
-          >
-            Upload Quotes
-          </button>
-        </div>
-        <div class="clearquote-div btn-div d-none">
-          <button type="button" class="btn-warning btn" (click)="openQuotes('Clear')"
-          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'"
-          >
+</div>
+<div class="nav-side-menu blur-bg">
+  <div class="product-name">
+    <img [src]="getHeaderLogo()" alt="...">
+    <h2>{{getHeaderMainText()}}</h2>
+  </div>
+  <div class="menu-list"
+    [ngClass]="userAuthService.platform.host == platformConstant.MUNIX ? 'munix-menu-list' : 'im-menu-list'">
+    <li class="sidenav-btn">
+      <div class="btn-div">
+        <button type="button" (click)="openQuotes('Live')" class="btn btn-secondary"
+          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'">
+          My Quotes
+        </button>
+        <button type="button" (click)="uploadQuotes()" class="btn btn-secondary ml-0"
+          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'">
+          Upload Quotes
+        </button>
+      </div>
+      <div class="clearquote-div btn-div d-none">
+        <button type="button" class="btn-warning btn" (click)="openQuotes('Clear')"
+          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'">
           Clear <br> Quotes
-            <div class="btn-icon">
-              <span class="badge badge-default" id="quoteCount" *ngIf="liveRequestsCount">{{liveRequestsCount}}</span>
-              <i class="fa fa-exclamation-triangle"></i>
-            </div>
-          </button>
-          <button type="button" (click)="openQuotes('Previous')" class="btn-primary btn ml-0"
-          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'"
-          >
-            Previous<br />Quotes
-            <div class="btn-icon">
-              <i class="fa fa-history"></i>
-            </div>
-          </button>
-        </div>
-      </li>
-      <!-- <ul id="menu-content" class="menu-content collapse out position-relative">
+          <div class="btn-icon">
+            <span class="badge badge-default" id="quoteCount" *ngIf="liveRequestsCount">{{liveRequestsCount}}</span>
+            <i class="fa fa-exclamation-triangle"></i>
+          </div>
+        </button>
+        <button type="button" (click)="openQuotes('Previous')" class="btn-primary btn ml-0"
+          [ngClass]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') && 'disabled'">
+          Previous<br />Quotes
+          <div class="btn-icon">
+            <i class="fa fa-history"></i>
+          </div>
+        </button>
+      </div>
+    </li>
+    <!-- <ul id="menu-content" class="menu-content collapse out position-relative">
         <ng-container *ngIf="activeIfContains('/web/money-market')">
           <small>TRADE</small>
           <ul class="sub-menu currencies-tab show" id="currencies">
@@ -311,8 +315,15 @@
           </a>
         </li>
       </ul> -->
-      <div #chatComponent></div>
-      <!-- <li class="sidebar-contact mt- px-0">
+    <div style="color: white;margin-left: 20px;">
+      {{token$ | async | json}}
+      <br>
+      <br>
+      <a (click)="changeToken()" style="cursor: pointer;">Click here to change token</a>
+    </div>
+
+    <div #chatComponent></div>
+    <!-- <li class="sidebar-contact mt- px-0">
         <small class="chat-label">
              {{userAuthService.platform.host === platformConstant.MUNIX ? 'MunixChat' : 'CHAT'}}
         </small>
@@ -449,10 +460,10 @@
           </li>
         </ng-container>
       </li> -->
-    </div>
   </div>
-  
-  <!-- <div class="user-details-tooltip" *ngIf="userDetails.user && userDetails.showTooltip" (mouseover)="showUserTooltip(userDetails.user)" (mouseout)="hideUserTooltip()">
+</div>
+
+<!-- <div class="user-details-tooltip" *ngIf="userDetails.user && userDetails.showTooltip" (mouseover)="showUserTooltip(userDetails.user)" (mouseout)="hideUserTooltip()">
     <div class="user-details-tooltip-wrapper">
       <span class="tooltiptextarea">
         <div class="m-3 position-relative">
@@ -516,7 +527,7 @@
       </span>
     </div>
   </div> -->
-            <!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
-          <!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
-          <!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
-          <!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
+<!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
+<!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
+<!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
+<!-- [ngbTooltip]="!hasAccessControl('MONEY_MATCH', 'READ_TRADE') ? Tooltip.dontHavePermission : ''" placement="auto" container="body" -->
