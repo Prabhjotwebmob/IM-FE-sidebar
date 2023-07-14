@@ -3,7 +3,7 @@ import { loadRemoteModule } from './utils/federation-utils';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import { loginSuccess } from '../../../IM-FE-libs/store/actions/auth.actions';
+import { loginSuccess } from '../../../libs/store/actions/auth.actions';
 
 @Component({
   selector: 'app-root',

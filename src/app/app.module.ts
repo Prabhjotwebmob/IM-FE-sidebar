@@ -4,7 +4,7 @@ import { SidebarComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
-import { appReducer } from '../../../IM-FE-libs/store/states/app.states';
+import { appReducer } from '../../../libs/store/states/app.states';
 
 @NgModule({
   declarations: [
